@@ -1,0 +1,167 @@
+<html>
+<canvas id="CanvasGame" width="850" height="700"></canvas>
+<script>
+var canvas;
+var canvasContext;
+var Xball = 50;
+var Yball = 200;
+var Xspeedball = 20;
+var Yspeedball = 15;
+var paddle1Y = 200;
+var paddle2Y = 200;
+const paddle_Height =85;
+var paddleSpeed = 35;
+var up = false;
+var down =false;
+var point1 = 0;
+var point2 = 0;
+window.onload=function(){
+
+     canvas = document.getElementById("CanvasGame");
+     canvasContext = canvas.getContext('2d');
+     var timePerSecond =30;
+      setInterval(function(){
+         
+          movement();
+          draw();
+          
+},1000/timePerSecond);
+
+  
+
+window.addEventListener('keydown',function(e){
+        
+    if(e.keyCode == 40)
+       up = true;
+
+    if(e.keyCode == 38)
+        down = true;
+       
+});
+
+window.addEventListener('keyup',function(e){
+       
+    if(e.keyCode == 40)
+       up = false;
+
+    if(e.keyCode == 38)
+        down = false;
+        
+
+});
+
+  
+   canvas.addEventListener('mousemove',function(evt){
+               var mousePos = calculateMouse(evt);
+                   paddle2Y = mousePos.Y - (paddle_Height/2); 
+
+});}
+
+
+function calculateMouse(evt){
+ var rect = canvas.getBoundingClientRect();
+ var root = document.documentElement;
+ var mouseX= evt.clientX - rect.left - root.scrollLeft;
+ var mouseY= evt.clientY - rect.top - root.scrollTop;
+ return{
+         X:mouseX,
+         Y:mouseY
+     }
+}
+
+
+
+
+function movement(){
+             moveLeftPaddle();
+             Xball += Xspeedball;
+             Yball += Yspeedball;
+              
+          if(Yball<0)
+             Yspeedball = -Yspeedball;
+          if(Xball<35)
+{
+            if(Yball>paddle1Y&&Yball<paddle1Y+paddle_Height)
+             Xspeedball = -Xspeedball;
+            else if(Xball<10){
+                 resetBall();
+                      point2++;
+}
+}
+          if(Yball>canvas.height)     
+             Yspeedball = -Yspeedball;
+          if(Xball>canvas.width-35){
+             if(Yball>paddle2Y&&Yball<paddle2Y+paddle_Height)
+             Xspeedball = -Xspeedball;
+            else
+                   if(Xball>canvas.width-10)
+{
+                     resetBall();
+                      point1++;
+}
+
+}        
+       
+          if(paddle1Y<0)
+                paddle1Y = 0;
+         if(paddle1Y+paddle_Height>canvas.height)
+                paddle1Y = canvas.height-paddle_Height;
+         
+         if(paddle2Y<0)
+                paddle2Y = 0;
+         if(paddle2Y+paddle_Height>canvas.height)
+                paddle2Y = canvas.height-paddle_Height;
+       
+            
+}
+
+
+
+
+
+
+function draw(){
+                 
+                        
+
+                        buildRect(0,0,850,700,'black');
+                        buildCircle(Xball,Yball,10,'white');
+                        buildRect(10,paddle1Y,15,paddle_Height);
+                        buildRect(canvas.width-25,paddle2Y,15,paddle_Height);
+                        canvasContext.fillText(point1+" / "+point2,canvas.width/2,50);
+}
+
+function buildCircle(left,top,rad,color){
+
+ canvasContext.fillStyle= color;
+ canvasContext.beginPath();
+ canvasContext.arc(left,top,rad,0,Math.PI*2,true);
+ canvasContext.fill();
+
+
+}
+
+
+function buildRect(left,top,width,height,color)
+{
+           canvasContext.fillStyle = color;
+     canvasContext.fillRect(left,top,width,height);
+
+}
+function moveLeftPaddle(){
+
+   if(up == true)
+       paddle1Y += paddleSpeed;
+   if(down == true)
+       paddle1Y -= paddleSpeed;
+}
+
+
+function resetBall(){
+
+    Xball = canvas.width/2;
+    Yball = canvas.height/2; 
+}
+
+</script>
+</html>
